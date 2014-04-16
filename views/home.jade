@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  div.jumbotron
+    h1 Hackathon Starter test
+    p.lead
+      | Test ground using
+      a(href='https://github.com/sahat/hackathon-starter')
+        |  Hackathon Starter
+
+  .row
+      div.well.well-small.col-md-6
+        .row
+          form.form-inline.col-md-12
+              legend Socket.io Chat
+              .row
+                #recieved.col-md-12
+              .row
+                .col-md-12
+                  .form-group
+                    label.control-label(for='message') Message
+                    input.form-control(type='text', name='message', id='message', autofocus=true)
+                    button#send.btn.btn-default(disabled)
+                      | Send
+                    button#setname.btn.btn-default(disabled)
+                      | Set Name
+      .col-md-6
+        div.well.well-small
+          .row
+            form.form-inline
+                legend Socket.io Background
+                .col-md-12
+                  button#backgroundbtn.btn.btn-default
+                    | Random Background
+
+        div.well.well-small
+          .row
+              legend Socket.io "Game"
+              .col-md-12
+                button#game.btn.btn-default
+                  | Start "Game"
+                br
+                br
+                div#gamepiece
