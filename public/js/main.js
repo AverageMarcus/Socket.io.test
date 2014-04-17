@@ -3,6 +3,7 @@ $(document).ready(function() {
   chat.init();
   randomBackground.init();
   game.init();
+  vote.init();
 });
 
 
@@ -90,4 +91,54 @@ var game = (function(){
   };
 
   return { init: init };
+}());
+
+
+var vote = (function(){
+  var chartResults = { a:0,b:0,c:0};
+
+  var init = function init(){
+    var updateChart = function updateChart(data){
+      var bar = $('<div/>').css({
+        'background-color':'blue',
+        'height':'20px',
+        'border':'1px solid #111',
+        'overflow':'visible',
+        'text-align':'center',
+        'color':'#ccc',
+        'font-weight':'bold',
+        'margin-top':'1px'
+        });
+      var chart = $('#results').css({'border':'1px solid black', 'margin':'10px', 'padding':'5px'}).empty();
+
+      chartResults[data]++;
+
+      var maxVal = 0;
+      for (var result in chartResults) {
+        maxVal += chartResults[result];
+      }
+
+      for (var result in chartResults) {
+        var resultBar = bar.clone();
+        var percent = Math.floor((chartResults[result] / maxVal) * 100);
+        resultBar.append($('<div/>').css('min-width','100px').text(result.toUpperCase() + " ("+chartResults[result]+") - "+ percent +"%"));
+        resultBar.css('width', percent+'%');
+        chart.append(resultBar);
+      }
+
+    };
+
+    socket.on('update chart', function (data) {
+      if(data){
+        updateChart(data);
+      }
+    });
+
+    $('#choiceA,#choiceB,#choiceC').on('click', function(){
+      var vote = $(this).text().replace('Choice ', '').toLowerCase();
+      socket.emit('vote', vote);
+    });
+  };
+
+  return { init : init };
 }());

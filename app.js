@@ -232,6 +232,11 @@ io.sockets.on('connection', function(socket){
     socket.emit('move gamepiece', data);
   });
 
+  socket.on('vote', function(data){
+    socket.broadcast.emit('update chart', data);
+    socket.emit('update chart', data);
+  });
+
   socket.on('disconnect', function(){
     console.log('Socket disconnected');
   });
