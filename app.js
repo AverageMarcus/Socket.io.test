@@ -200,13 +200,20 @@ server.listen(app.get('port'), function() {
 module.exports = app;
 
 
+var onlineUsers = 0;
+
 io.configure(function(){
   io.set('transports', ['websocket']);
 });
 
 io.sockets.on('connection', function(socket){
 
+  onlineUsers++;
+
   socket.emit('message', { text : 'Server: Hey, what\'s your name?' });
+
+  socket.emit('user count', onlineUsers);
+  socket.broadcast.emit('user count', onlineUsers);
 
   socket.on('set name', function(name){
     socket.set('user', name, function(){
@@ -238,6 +245,8 @@ io.sockets.on('connection', function(socket){
   });
 
   socket.on('disconnect', function(){
+    onlineUsers--;
+    socket.broadcast.emit('user count', onlineUsers);
     console.log('Socket disconnected');
   });
 })

@@ -1,58 +1,62 @@
 extends layout
 
 block content
-  div.jumbotron
-    h1 Hackathon Starter test
-    p.lead
-      | Test ground using
-      a(href='https://github.com/sahat/hackathon-starter')
-        |  Hackathon Starter
+  .row
+    div.well.well-small.col-md-12
+      .row
+        .col-md-8
+          h1 Hackathon Starter test
+          p.lead
+            | Test ground using 
+            a(href='https://github.com/sahat/hackathon-starter') Hackathon Starter
+        .col-md-4
+          h3
+            | Socket.io Actions
+          .btn-group
+            button#backgroundbtn.btn.btn-default
+              | Random Background
+            button#game.btn.btn-default
+              | Start "Game"
+          span#gamepiece
 
   .row
-      div.well.well-small.col-md-6
-        .row
-          form.form-inline.col-md-12
-              legend Socket.io Chat
-              .row
-                #recieved.col-md-12
-              .row
-                .col-md-12
-                  .form-group
-                    label.control-label(for='message') Message
-                    input.form-control(type='text', name='message', id='message', autofocus=true)
-                    button#send.btn.btn-default(disabled)
-                      | Send
-                    button#setname.btn.btn-default(disabled)
-                      | Set Name
-      .col-md-6
-        div.well.well-small
-          .row
-            form.form-inline
-                legend Socket.io Background
-                .col-md-12
-                  button#backgroundbtn.btn.btn-default
-                    | Random Background
-
-        div.well.well-small
-          .row
-              legend Socket.io "Game"
+    .col-md-12.text-center
+      .panel.panel-primary
+        .panel-body
+          #usercount
+  .row.panels
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          | Socket.io Chat
+        .panel-body
+          form.form-inline
+            .row
+              #recieved.col-md-12
+            .row
               .col-md-12
-                button#game.btn.btn-default
-                  | Start "Game"
-                br
-                br
-                div#gamepiece
-
-  .well
-    .row
-      .col-md-12.text-center
-        button#choiceA.btn.btn-default
-          | Choice A
-        button#choiceB.btn.btn-default
-          | Choice B
-        button#choiceC.btn.btn-default
-          | Choice C
-    .row
-      .col-md-12
-        #results
+                .form-group
+                  label.control-label(for='message') Message
+                  input.form-control(type='text', name='message', id='message', autofocus=true)
+                  button#send.btn.btn-default(disabled)
+                    | Send
+                  button#setname.btn.btn-default(disabled)
+                    | Set Name
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          | Poll
+        .panel-body
+          .row
+            .col-md-12.text-center
+              .btn-group
+                button#choiceA.btn.btn-default
+                  | Choice A
+                button#choiceB.btn.btn-default
+                  | Choice B
+                button#choiceC.btn.btn-default
+                  | Choice C
+          .row
+            .col-md-12
+              #results
 

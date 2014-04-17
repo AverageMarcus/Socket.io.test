@@ -4,12 +4,18 @@ $(document).ready(function() {
   randomBackground.init();
   game.init();
   vote.init();
+  userCount.init();  
 });
 
 
 var chat = (function(){
     var init = function init(){
+      var username = null;
+
       socket.on('message', function (data) {
+        if(username && data.text.indexOf(username+' says:')>=0){
+          data.text = data.text.replace(username+' says:', '<i>'+username+'</i> says:');
+        }
         $('#recieved').append(data.text + "<br/>");
         $('#recieved').get(0).scrollTop = $('#recieved').get(0).scrollHeight;
         socket.emit('acknowledge', { text: 'Got it!' });
@@ -24,6 +30,7 @@ var chat = (function(){
       $('#setname').on('click', function(event){
         event.preventDefault();
         var message = $('#message').val();
+        username = message;
         socket.emit('set name', message );
         $('#message').val('');
         $('#send').get(0).disabled = false;
@@ -72,18 +79,30 @@ var game = (function(){
   var init = function init(){
     $('#game').on('click', function(event){
       event.preventDefault();
+      $('#gamepiece').css({
+        left: $('#gamepiece').offset.left,
+        top: $('#gamepiece').offset.top,
+        display:'block'
+      });
       $(document).keyup(function(event){
+        event.preventDefault();
         if(event.keyCode == 37) {
           socket.emit('play game', {left: '-=10'});
         }
         else if(event.keyCode == 39) {
           socket.emit('play game', {left: '+=10'});
         }
+        else if(event.keyCode == 38) {
+          socket.emit('play game', {top: '-=10'});
+        }
+        else if(event.keyCode == 40) {
+          socket.emit('play game', {top: '+=10'});
+        }
+        return false;
       });
       return false;
     });
     socket.on('move gamepiece', function (data) {
-      console.log("playing");
       if(data){
         $('#gamepiece').animate(data);
       }
@@ -92,7 +111,6 @@ var game = (function(){
 
   return { init: init };
 }());
-
 
 var vote = (function(){
   var chartResults = { a:0,b:0,c:0};
@@ -137,6 +155,20 @@ var vote = (function(){
     $('#choiceA,#choiceB,#choiceC').on('click', function(){
       var vote = $(this).text().replace('Choice ', '').toLowerCase();
       socket.emit('vote', vote);
+    });
+  };
+
+  return { init : init };
+}());
+
+var userCount = (function(){
+  var init = function init(){
+    socket.on('user count', function (data) {
+      if(data){
+        var onlineMessage = data + ' Users Online';
+        if(data==1) onlineMessage = onlineMessage.replace('Users', 'User');
+        $('#usercount').text(onlineMessage);
+      }
     });
   };
 
