@@ -29,6 +29,7 @@ var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
+var socketController = require('./controllers/socket');
 
 /**
  * API keys + Passport configuration.
@@ -199,54 +200,45 @@ server.listen(app.get('port'), function() {
 
 module.exports = app;
 
-
-var onlineUsers = 0;
-
+/*
+  Socket.io
+ */
 io.configure(function(){
   io.set('transports', ['websocket']);
 });
 
+
+
 io.sockets.on('connection', function(socket){
-
-  onlineUsers++;
-
-  socket.emit('message', { text : 'Server: Hey, what\'s your name?' });
-
-  socket.emit('user count', onlineUsers);
-  socket.broadcast.emit('user count', onlineUsers);
-
+  var socketActions = socketController.init(socket);
+  
+  socketActions.updateOnlineUsers(true);
+  socketActions.requestName();
+    
   socket.on('set name', function(name){
-    socket.set('user', name, function(){
-      console.log('Got user: '+name);
-      socket.emit('message', {text:'Server: Hello '+name});
-    });
+    socketActions.recieveName(name);
   });
 
   socket.on('message', function(data){
     socket.get('user', function (err, name) {
-      socket.broadcast.emit('message', {text: name+' says: '+ data.text});
-      socket.emit('message', {text: name+' says: '+ data.text});
+      socketActions.sendMessage(data.text, name, true);
     });
   });
   socket.on('random background', function(data){
-    socket.broadcast.emit('change background', data);
-      socket.emit('change background', data);
+    socketActions.changeBackground(data);
   });
 
   socket.on('play game', function(data){
-    console.log('playing game');
-    socket.broadcast.emit('move gamepiece', data);
-    socket.emit('move gamepiece', data);
+    socketActions.playGame(data);
   });
 
   socket.on('vote', function(data){
-    socket.broadcast.emit('update chart', data);
-    socket.emit('update chart', data);
+    socketActions.submitVote(data);
   });
 
   socket.on('disconnect', function(){
     onlineUsers--;
-    socket.broadcast.emit('user count', onlineUsers);
+    socketActions.updateOnlineUsers(false);
     console.log('Socket disconnected');
   });
 })
